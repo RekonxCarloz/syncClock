@@ -3,9 +3,10 @@ import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class client {
-
-    public static void main(String[] args) {
+public class client extends Thread {
+    
+    @Override
+    public void run(){
         try {
             String host = "localhost";
             int puerto = 9000;
