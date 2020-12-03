@@ -16,9 +16,10 @@ import java.util.logging.Logger;
  */
 public class clientFrame extends javax.swing.JFrame implements Runnable {
 
-    public int hora, minutos, segundos;
+    public int horas, minutos, segundos;
     public Calendar calendario;
     public Thread h1;
+    boolean estado;
 
     public clientFrame() {
         initComponents();
@@ -115,19 +116,55 @@ public class clientFrame extends javax.swing.JFrame implements Runnable {
     public void run() {
         Thread ct = Thread.currentThread();
         while (ct == h1) {
-            calcula();
-            clockScreen.setText(hora + ":" + minutos + ":" + segundos);
-            try {
+            
+            calcula(10,9,55,true);
+            
+            //clockScreen.setText(horas + ":" + minutos + ":" + segundos);
+            
+        }
+    }
+
+    public void calcula(int horas, int minutos, int segundos,boolean estado) {
+        //Calendar calendario = new GregorianCalendar();
+        //horas = calendario.get(Calendar.HOUR_OF_DAY);
+        //minutos = calendario.get(Calendar.MINUTE);
+        //segundos = calendario.get(Calendar.SECOND);
+        this.horas = horas;
+        this.minutos = minutos;
+        this.segundos = segundos;
+        String h="";
+        String m="";
+        String s="";
+       
+        while(estado){
+           
+            segundos++;
+            //Comprobacion de tiempo
+            if (segundos == 60) {
+                    minutos++;
+                    segundos = 0;
+                    if (minutos == 60) {
+                        minutos = 0;
+                        horas++;
+                        if (horas == 24) {
+                            horas = 0;
+                        }
+                    }
+                }
+        
+        h = Integer.toString(horas);
+        m =  Integer.toString(minutos);
+        s =  Integer.toString(segundos);
+        clockScreen.setText(h + ":" + m + ":" + s);
+        try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
         }
-    }
-
-    public void calcula() {
-        Calendar calendario = new GregorianCalendar();
-        hora = calendario.get(Calendar.HOUR_OF_DAY);
-        minutos = calendario.get(Calendar.MINUTE);
-        segundos = calendario.get(Calendar.SECOND);
+        
+        
+        
+        
+        
     }
 }
