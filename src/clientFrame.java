@@ -1,5 +1,9 @@
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -15,14 +19,12 @@ public class clientFrame extends javax.swing.JFrame implements Runnable {
     public int hora, minutos, segundos;
     public Calendar calendario;
     public Thread h1;
-    public static client cliente;
 
     public clientFrame() {
         initComponents();
         h1 = new Thread(this);
         h1.start();
         setLocationRelativeTo(null);
-        cliente = new client();
     }
 
     /**
@@ -38,7 +40,7 @@ public class clientFrame extends javax.swing.JFrame implements Runnable {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        clockScreen.setFont(new java.awt.Font("Lucida Grande", 1, 90)); // NOI18N
+        clockScreen.setFont(new java.awt.Font("Avenir", 1, 90)); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -91,7 +93,16 @@ public class clientFrame extends javax.swing.JFrame implements Runnable {
             @Override
             public void run() {
                 new clientFrame().setVisible(true);
-                cliente.start();
+                try {
+                    String host = "localhost";
+                    int puerto = 9000;
+                    Socket cliente = new Socket(host, puerto);
+                    //if (closeSocket) {
+                    cliente.close();
+                    //}
+                } catch (IOException ex) {
+                    Logger.getLogger(clientFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

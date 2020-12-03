@@ -43,7 +43,7 @@
     <Component class="javax.swing.JLabel" name="clockScreen">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-          <Font name="Lucida Grande" size="90" style="1"/>
+          <Font name="Avenir" size="90" style="1"/>
         </Property>
       </Properties>
     </Component>
