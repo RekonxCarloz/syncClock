@@ -1,4 +1,10 @@
 
+import java.io.*;
+import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,22 +14,23 @@
  *
  * @author carloscobian
  */
-public class serverFrame extends javax.swing.JFrame {
+public class serverFrame extends javax.swing.JFrame implements Runnable {
 
-    public static server servidor;
-    public static boolean closeSocket;
-    public static boolean isConnected;
+    public static String closeSocket, statusConex, hora;
+    public static String setHour = "true";
+    public boolean stop;
+    Thread server;
+    DataOutputStream dos;
+    DataInputStream dis;
 
     public serverFrame() {
         initComponents();
-        servidor = new server(serverStatus, closeSocket, clock1, clock2, clock3, isConnected);
+        server = new Thread(this);
+        server.start();
+        stop = true;
+        serverStatus.disable();
+        clock.disable();
         setLocationRelativeTo(null);
-        changeHourButton.setVisible(false);
-        disconnectButton.setVisible(false);
-        changeHourButton1.setVisible(false);
-        disconnectButton1.setVisible(false);
-        changeHourButton2.setVisible(false);
-        disconnectButton2.setVisible(false);
     }
 
     /**
@@ -38,25 +45,19 @@ public class serverFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         serverStatus = new javax.swing.JTextArea();
-        clock1 = new javax.swing.JLabel();
         changeHourButton = new javax.swing.JButton();
-        disconnectButton = new javax.swing.JButton();
-        clock2 = new javax.swing.JLabel();
-        changeHourButton1 = new javax.swing.JButton();
-        disconnectButton1 = new javax.swing.JButton();
-        clock3 = new javax.swing.JLabel();
-        changeHourButton2 = new javax.swing.JButton();
-        disconnectButton2 = new javax.swing.JButton();
+        sendButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        clock = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Servidor - Sincronización De Reloj - Clientes Conectados");
 
         serverStatus.setColumns(20);
+        serverStatus.setFont(new java.awt.Font("Avenir", 1, 14)); // NOI18N
         serverStatus.setRows(5);
         jScrollPane1.setViewportView(serverStatus);
-
-        clock1.setFont(new java.awt.Font("Avenir", 1, 90)); // NOI18N
 
         changeHourButton.setText("Cambiar hora");
         changeHourButton.addActionListener(new java.awt.event.ActionListener() {
@@ -65,74 +66,41 @@ public class serverFrame extends javax.swing.JFrame {
             }
         });
 
-        disconnectButton.setText("Desconectar Cliente");
-        disconnectButton.addActionListener(new java.awt.event.ActionListener() {
+        sendButton.setText("Enviar hora");
+        sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disconnectButtonActionPerformed(evt);
+                sendButtonActionPerformed(evt);
             }
         });
 
-        clock2.setFont(new java.awt.Font("Avenir", 1, 90)); // NOI18N
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        changeHourButton1.setText("Cambiar hora");
-        changeHourButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeHourButton1ActionPerformed(evt);
-            }
-        });
-
-        disconnectButton1.setText("Desconectar Cliente");
-        disconnectButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disconnectButton1ActionPerformed(evt);
-            }
-        });
-
-        clock3.setFont(new java.awt.Font("Avenir", 1, 90)); // NOI18N
-
-        changeHourButton2.setText("Cambiar hora");
-        changeHourButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeHourButton2ActionPerformed(evt);
-            }
-        });
-
-        disconnectButton2.setText("Desconectar Cliente");
-        disconnectButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disconnectButton2ActionPerformed(evt);
-            }
-        });
+        clock.setColumns(20);
+        clock.setFont(new java.awt.Font("Lucida Grande", 0, 70)); // NOI18N
+        clock.setRows(5);
+        jScrollPane2.setViewportView(clock);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(clock1, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(50, 50, 50)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(changeHourButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(disconnectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(clock2, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(50, 50, 50)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(changeHourButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(disconnectButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(clock3, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(50, 50, 50)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(changeHourButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(disconnectButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(41, 41, 41)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(changeHourButton, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(15, 15, 15))
+                            .addComponent(jScrollPane1))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -142,57 +110,29 @@ public class serverFrame extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(clock1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
                         .addComponent(changeHourButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(disconnectButton)))
-                .addGap(44, 44, 44)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(clock2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(changeHourButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(disconnectButton1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(clock3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(changeHourButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(disconnectButton2)))
-                .addGap(42, 42, 42))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(sendButton))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void changeHourButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeHourButtonActionPerformed
-
+        clock.enable();
+        stop = false;
     }//GEN-LAST:event_changeHourButtonActionPerformed
 
-    private void disconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectButtonActionPerformed
-
-    }//GEN-LAST:event_disconnectButtonActionPerformed
-
-    private void changeHourButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeHourButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_changeHourButton1ActionPerformed
-
-    private void disconnectButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_disconnectButton1ActionPerformed
-
-    private void changeHourButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeHourButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_changeHourButton2ActionPerformed
-
-    private void disconnectButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_disconnectButton2ActionPerformed
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+        
+    }//GEN-LAST:event_sendButtonActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -223,23 +163,39 @@ public class serverFrame extends javax.swing.JFrame {
             @Override
             public void run() {
                 new serverFrame().setVisible(true);
-                servidor.start();
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton changeHourButton;
-    private javax.swing.JButton changeHourButton1;
-    private javax.swing.JButton changeHourButton2;
-    private javax.swing.JLabel clock1;
-    private javax.swing.JLabel clock2;
-    private javax.swing.JLabel clock3;
-    private javax.swing.JButton disconnectButton;
-    private javax.swing.JButton disconnectButton1;
-    private javax.swing.JButton disconnectButton2;
+    private javax.swing.JTextArea clock;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton sendButton;
     private javax.swing.JTextArea serverStatus;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void run() {
+        int puerto = 5000;
+        try {
+            ServerSocket server = new ServerSocket(puerto);
+            serverStatus.setText("Servidor esperando cliente");
+            for (;;) {
+                Socket scliente = server.accept();
+                statusConex = "Nuevo cliente conectado " + scliente.getInetAddress() + ": " + scliente.getPort();
+                serverStatus.setText(statusConex);
+                dis = new DataInputStream(scliente.getInputStream());
+                dos = new DataOutputStream(scliente.getOutputStream());
+                while (stop) {
+                    hora = dis.readUTF();
+                    clock.setText(hora);
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(serverFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
