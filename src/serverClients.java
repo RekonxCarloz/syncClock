@@ -1,5 +1,8 @@
 
+import java.io.IOException;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 public class serverClients extends javax.swing.JFrame {
 
     public static server server;
@@ -7,6 +10,7 @@ public class serverClients extends javax.swing.JFrame {
     public String puerto1, puerto2, puerto3, host1String, host2String, host3String;
     public byte[] b;
     DatagramPacket sendHour;
+    DatagramSocket s;
     
     public serverClients() {
         initComponents();
@@ -189,9 +193,20 @@ public class serverClients extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void modificarHora1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarHora1ActionPerformed
-        clock1.enable();
-        b = estado.getBytes();
-        sendHour = new DatagramPacket(b, b.length, server.host1(), server.puerto1());
+        
+        try {
+            clock1.enable();
+            s = new DatagramSocket();
+            b = estado.getBytes();
+            sendHour = new DatagramPacket(b, b.length, server.host1(), server.puerto1());
+            s.send(sendHour);
+        } catch (SocketException ex) {
+            Logger.getLogger(serverClients.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(serverClients.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+        
     }//GEN-LAST:event_modificarHora1ActionPerformed
 
     private void sendHour1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendHour1ActionPerformed

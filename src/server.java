@@ -23,14 +23,13 @@ public class server extends Thread {
         this.host1 = host1;
         this.host2 = host2;
         this.host3 = host3;
-        this.host = host;
-        this.puerto = puerto;
+
     }
 
     @Override
     public void run() {
         try {
-            DatagramSocket s = new DatagramSocket(2000);
+            DatagramSocket s = new DatagramSocket(1234);
             System.out.println("Server Listo");
             for (;;) {
                 byte[] buff = new byte[1024];
@@ -68,6 +67,10 @@ public class server extends Thread {
         }//catch
     }//main
     
+    
+   // public DatagramSocket s(){
+     //   return s;
+    //}
     
     public InetAddress host1(){
         return chost1;

@@ -28,23 +28,28 @@ public class cliente extends Thread {
             
 
             Thread ct = Thread.currentThread();
-
-            while (ct == h1) {
-                setHour(20, 29, 55, true);
-            }
-
             // ----------------------------- Recibir Paquete ----------------------------
-            /*byte[] buff2 = new byte[20];
+            byte[] buff2 = new byte[20];
 
             String cadenaServer = "";
             DatagramPacket mensajeServer;
-                mensajeServer = new DatagramPacket(buff2, buff2.length);
-                cl.receive(mensajeServer);
-                cadenaServer = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
-            
+            mensajeServer = new DatagramPacket(buff2, buff2.length);
+            cl.receive(mensajeServer);
+            cadenaServer = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
 
             System.out.println("Mensaje del servidor: " + cadenaServer);
-             */
+            
+            
+            while (ct == h1) {
+                setHour(20, 29, 55, true);
+                if (cadenaServer.equals("false")) {
+                    setHour(0, 0, 0, false);
+
+                }
+            }
+
+            
+             
             //cl.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,8 +86,22 @@ public class cliente extends Thread {
             clockScreen.setText(setHora);
 
             byte[] b = hora.getBytes();
-            sendHour = new DatagramPacket(b, b.length, InetAddress.getByName("192.168.0.11"), 2000);
+            sendHour = new DatagramPacket(b, b.length, InetAddress.getByName("localhost"), 1234);
             cl.send(sendHour);
+            
+            
+            /* Mensaje desde el servidor.
+            
+            byte[] buff2 = new byte[20];
+            String cadenaServer = "";
+            DatagramPacket mensajeServer;
+            mensajeServer = new DatagramPacket(buff2, buff2.length);
+            cl.receive(mensajeServer);
+            cadenaServer = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
+            
+
+            System.out.println("Mensaje del servidor: " + cadenaServer);
+             */
 
             try {
                 Thread.sleep(1000);
