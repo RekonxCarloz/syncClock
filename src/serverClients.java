@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 public class serverClients extends javax.swing.JFrame {
 
     public static server server;
-    public final String estadoF, estadoT;
+    public String estadoF, nuevaHora;
     public String puerto1, puerto2, puerto3, host1String, host2String, host3String;
     public byte[] b;
     DatagramPacket stopClock;
@@ -19,8 +19,10 @@ public class serverClients extends javax.swing.JFrame {
         clock1.disable();
         clock2.disable();
         clock3.disable();
+        sendHour1.setEnabled(false);
+        sendHour2.setEnabled(false);
+        sendHour3.setEnabled(false);
         estadoF = "false";
-        estadoT = "true";
     }
 
     /**
@@ -192,20 +194,22 @@ public class serverClients extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void modificarHora1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarHora1ActionPerformed
         
         try {
             clock1.enable();
+            sendHour1.setEnabled(true);
             s = new DatagramSocket();
             b = estadoF.getBytes();
             stopClock = new DatagramPacket(b, b.length, server.host1(), server.puerto1());
             s.send(stopClock);
         } catch (SocketException ex) {
-            Logger.getLogger(serverClients.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error en crear socket : " + ex.toString());
         } catch (IOException ex) {
-            Logger.getLogger(serverClients.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error en enviar datagrama : " + ex.toString());
         }
        
         
@@ -215,13 +219,15 @@ public class serverClients extends javax.swing.JFrame {
         try {
             clock1.disable();
             s = new DatagramSocket();
-            b = estadoT.getBytes();
-            sendHour = new DatagramPacket(b, b.length, server.host1(), server.puerto1());
+            nuevaHora = "true" + clock1.getText();
+            b = nuevaHora.getBytes();
+            sendHour = new DatagramPacket(b,b.length, server.host1(), server.puerto1());
             s.send(sendHour);
+            System.out.println(nuevaHora);
         } catch (SocketException ex) {
-            Logger.getLogger(serverClients.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error en crear socket : " + ex.toString());
         } catch (IOException ex) {
-            Logger.getLogger(serverClients.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error en enviar datagrama : " + ex.toString());
         }
     }//GEN-LAST:event_sendHour1ActionPerformed
 
@@ -229,6 +235,7 @@ public class serverClients extends javax.swing.JFrame {
         
         try {
             clock2.enable();
+            sendHour2.setEnabled(true);
             s = new DatagramSocket();
             b = estadoF.getBytes();
             stopClock = new DatagramPacket(b, b.length, server.host2(), server.puerto2());
@@ -248,6 +255,7 @@ public class serverClients extends javax.swing.JFrame {
         
         try {
             clock3.enable();
+            sendHour3.setEnabled(true);
             s = new DatagramSocket();
             b = estadoF.getBytes();
             stopClock = new DatagramPacket(b, b.length, server.host3(), server.puerto3());
