@@ -190,8 +190,8 @@ public class serverClients extends javax.swing.JFrame {
 
     private void modificarHora1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarHora1ActionPerformed
         clock1.enable();
-        //b = estado.getBytes();
-        //sendHour = new DatagramPacket(b, b.length, server.host(), server.puerto());
+        b = estado.getBytes();
+        sendHour = new DatagramPacket(b, b.length, server.host1(), server.puerto1());
     }//GEN-LAST:event_modificarHora1ActionPerformed
 
     private void sendHour1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendHour1ActionPerformed

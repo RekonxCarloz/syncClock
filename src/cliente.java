@@ -81,7 +81,7 @@ public class cliente extends Thread {
             clockScreen.setText(setHora);
 
             byte[] b = hora.getBytes();
-            sendHour = new DatagramPacket(b, b.length, InetAddress.getByName("localhost"), 2000);
+            sendHour = new DatagramPacket(b, b.length, InetAddress.getByName("192.168.0.11"), 2000);
             cl.send(sendHour);
 
             try {

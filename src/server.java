@@ -13,8 +13,8 @@ public class server extends Thread {
     public static JTextArea clockScreen3;
     public static JLabel host1, host2, host3;
     public static String hora1, hora2, hora3;
-    public static InetAddress host;
-    public static int puerto;
+    public static InetAddress chost1, chost2, chost3;
+    public static int puerto1, puerto2, puerto3;
 
     public server(JTextArea clockScreen1, JTextArea clockScreen2, JTextArea clockScreen3, JLabel host1, JLabel host2, JLabel host3) {
         this.clockScreen = clockScreen1;
@@ -40,19 +40,23 @@ public class server extends Thread {
                     String hora = new String(clientHour.getData(), 0, clientHour.getLength());
                     String horac = hora.substring(0, 9);
                     if (horac.equals("cliente 1")) {
-                        host = clientHour.getAddress();
-                        puerto = clientHour.getPort();
-                        host1.setText(host.toString() +" : "+puerto);
+                        chost1 = clientHour.getAddress();
+                        puerto1 = clientHour.getPort();
+                        host1.setText(chost1.toString() +" : "+puerto1);
                         hora1 = hora.substring(11, hora.length());
                         clockScreen.setText(hora1);
                     }
                     if (horac.equals("cliente 2")) {
-                        host2.setText(clientHour.getAddress().toString() + " : " + clientHour.getPort());
+                        chost2 = clientHour.getAddress();
+                        puerto2 = clientHour.getPort();
+                        host2.setText(chost2.toString() +" : "+puerto2);
                         hora2 = hora.substring(11, hora.length());
                         clockScreen2.setText(hora2);
                     }
                     if (horac.equals("cliente 3")) {
-                        host3.setText(clientHour.getAddress().toString() + " : " + clientHour.getPort());
+                        chost3 = clientHour.getAddress();
+                        puerto3 = clientHour.getPort();
+                        host3.setText(chost3.toString() +" : "+puerto3);
                         hora3 = hora.substring(11, hora.length());
                         clockScreen3.setText(hora3);
                     }
@@ -65,11 +69,27 @@ public class server extends Thread {
     }//main
     
     
-    public InetAddress host(){
-        return host;
+    public InetAddress host1(){
+        return chost1;
     }
     
-    public int puerto(){
-        return puerto;
+    public int puerto1(){
+        return puerto1;
+    }
+    
+    public InetAddress host2(){
+        return chost2;
+    }
+    
+    public int puerto2(){
+        return puerto2;
+    }
+    
+    public InetAddress host3(){
+        return chost3;
+    }
+    
+    public int puerto3(){
+        return puerto3;
     }
 }
