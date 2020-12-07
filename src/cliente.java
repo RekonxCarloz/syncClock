@@ -28,9 +28,10 @@ public class cliente extends Thread {
         try {
             cl = new DatagramSocket();
             Thread ct = Thread.currentThread();
-            horas = 20;
-            minutos = 29;
+            horas = 18;
+            minutos = 34;
             segundos = 03;
+            while(true){
                 while (ct == h1) {
                     setHour(horas, minutos, segundos, true);
                 }
@@ -51,7 +52,8 @@ public class cliente extends Thread {
                 horas = (int) Integer.parseInt(nuevaHora.substring(4, 6));
                 minutos = (int) Integer.parseInt(nuevaHora.substring(7, 9));
                 segundos = (int) Integer.parseInt(nuevaHora.substring(10, nuevaHora.length()));
-            
+                serverEstado = "true";
+            }
             //cl.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +87,7 @@ public class cliente extends Thread {
             h = Integer.toString(horas);
             m = Integer.toString(minutos);
             s = Integer.toString(segundos);
-            hora = "cliente 1: " + h + ":" + m + ":" + s;
+            hora = "cliente 3: " + h + ":" + m + ":" + s;
             setHora = hora.substring(11, hora.length());
             clockScreen.setText(setHora);
 

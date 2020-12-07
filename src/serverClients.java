@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 public class serverClients extends javax.swing.JFrame {
 
     public static server server;
@@ -12,13 +13,13 @@ public class serverClients extends javax.swing.JFrame {
     DatagramPacket stopClock;
     DatagramPacket sendHour;
     DatagramSocket s;
-    
+
     public serverClients() {
         initComponents();
         server = new server(clock1, clock2, clock3, host1, host2, host3);
-        clock1.disable();
-        clock2.disable();
-        clock3.disable();
+        clock1.setEnabled(false);
+        clock2.setEnabled(false);
+        clock3.setEnabled(false);
         sendHour1.setEnabled(false);
         sendHour2.setEnabled(false);
         sendHour3.setEnabled(false);
@@ -198,9 +199,9 @@ public class serverClients extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void modificarHora1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarHora1ActionPerformed
-        
+
         try {
-            clock1.enable();
+            clock1.setEnabled(true);
             sendHour1.setEnabled(true);
             s = new DatagramSocket();
             b = estadoF.getBytes();
@@ -212,17 +213,15 @@ public class serverClients extends javax.swing.JFrame {
         } catch (IOException ex) {
             System.out.println("Error en enviar datagrama : " + ex.toString());
         }
-       
-        
     }//GEN-LAST:event_modificarHora1ActionPerformed
 
     private void sendHour1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendHour1ActionPerformed
         try {
-            clock1.disable();
+            clock1.setEnabled(false);
             s = new DatagramSocket();
             nuevaHora = "true" + clock1.getText();
             b = nuevaHora.getBytes();
-            sendHour = new DatagramPacket(b,b.length, server.host1(), server.puerto1());
+            sendHour = new DatagramPacket(b, b.length, server.host1(), server.puerto1());
             s.send(sendHour);
         } catch (SocketException ex) {
             System.out.println("Error en crear socket : " + ex.toString());
@@ -232,9 +231,9 @@ public class serverClients extends javax.swing.JFrame {
     }//GEN-LAST:event_sendHour1ActionPerformed
 
     private void modificarHora2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarHora2ActionPerformed
-        
+
         try {
-            clock2.enable();
+            clock2.setEnabled(true);
             sendHour2.setEnabled(true);
             s = new DatagramSocket();
             b = estadoF.getBytes();
@@ -248,13 +247,24 @@ public class serverClients extends javax.swing.JFrame {
     }//GEN-LAST:event_modificarHora2ActionPerformed
 
     private void sendHour2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendHour2ActionPerformed
-        // TODO add your handling code here:
+        try {
+            clock2.setEnabled(false);
+            s = new DatagramSocket();
+            nuevaHora = "true" + clock2.getText();
+            b = nuevaHora.getBytes();
+            sendHour = new DatagramPacket(b, b.length, server.host2(), server.puerto2());
+            s.send(sendHour);
+        } catch (SocketException ex) {
+            System.out.println("Error en crear socket : " + ex.toString());
+        } catch (IOException ex) {
+            System.out.println("Error en enviar datagrama : " + ex.toString());
+        }
     }//GEN-LAST:event_sendHour2ActionPerformed
 
     private void modificarHora3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarHora3ActionPerformed
-        
+
         try {
-            clock3.enable();
+            clock3.setEnabled(true);
             sendHour3.setEnabled(true);
             s = new DatagramSocket();
             b = estadoF.getBytes();
@@ -268,7 +278,18 @@ public class serverClients extends javax.swing.JFrame {
     }//GEN-LAST:event_modificarHora3ActionPerformed
 
     private void sendHour3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendHour3ActionPerformed
-        // TODO add your handling code here:
+        try {
+            clock3.setEnabled(false);
+            s = new DatagramSocket();
+            nuevaHora = "true" + clock3.getText();
+            b = nuevaHora.getBytes();
+            sendHour = new DatagramPacket(b, b.length, server.host3(), server.puerto3());
+            s.send(sendHour);
+        } catch (SocketException ex) {
+            System.out.println("Error en crear socket : " + ex.toString());
+        } catch (IOException ex) {
+            System.out.println("Error en enviar datagrama : " + ex.toString());
+        }
     }//GEN-LAST:event_sendHour3ActionPerformed
 
     /**
