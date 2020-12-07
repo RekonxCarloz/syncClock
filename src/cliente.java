@@ -6,50 +6,40 @@ import javax.swing.*;
 
 public class cliente extends Thread {
 
-    public String hora, setHora;
+    public String hora, setHora, serverEstado;
     public int horas, minutos, segundos, puerto;
     public DatagramSocket cl;
     public InetAddress host;
     public Thread h1;
     JLabel clockScreen;
     DatagramPacket sendHour;
+    DatagramPacket mensajeServer;
 
     public cliente(JLabel clockScreen) {
         this.clockScreen = clockScreen;
         h1 = new Thread(this);
         h1.start();
-
+        serverEstado = "true";
     }
 
     @Override
     public void run() {
         try {
             cl = new DatagramSocket();
-            
 
             Thread ct = Thread.currentThread();
-            // ----------------------------- Recibir Paquete ----------------------------
-            byte[] buff2 = new byte[20];
 
-            String cadenaServer = "";
-            DatagramPacket mensajeServer;
-            mensajeServer = new DatagramPacket(buff2, buff2.length);
-            cl.receive(mensajeServer);
-            cadenaServer = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
-
-            System.out.println("Mensaje del servidor: " + cadenaServer);
-            
-            
             while (ct == h1) {
                 setHour(20, 29, 55, true);
-                if (cadenaServer.equals("false")) {
-                    setHour(0, 0, 0, false);
-
-                }
             }
-
             
-             
+            
+            // ----------------------------- Recibir Paquete ----------------------------
+            byte[] buff2 = new byte[20];
+            mensajeServer = new DatagramPacket(buff2, buff2.length);
+            cl.receive(mensajeServer);
+            serverEstado = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
+
             //cl.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,6 +55,7 @@ public class cliente extends Thread {
         String s = "";
 
         while (estado) {
+
             segundos++;
             //Comprobacion de tiempo
             if (segundos == 60) {
@@ -81,27 +72,15 @@ public class cliente extends Thread {
             h = Integer.toString(horas);
             m = Integer.toString(minutos);
             s = Integer.toString(segundos);
-            hora = "cliente 1: " + h + ":" + m + ":" + s;
-            setHora = hora.substring(11,hora.length());
+            hora = "cliente 2: " + h + ":" + m + ":" + s;
+            setHora = hora.substring(11, hora.length());
             clockScreen.setText(setHora);
-
-            byte[] b = hora.getBytes();
-            sendHour = new DatagramPacket(b, b.length, InetAddress.getByName("localhost"), 1234);
-            cl.send(sendHour);
             
-            
-            /* Mensaje desde el servidor.
-            
-            byte[] buff2 = new byte[20];
-            String cadenaServer = "";
-            DatagramPacket mensajeServer;
-            mensajeServer = new DatagramPacket(buff2, buff2.length);
-            cl.receive(mensajeServer);
-            cadenaServer = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
-            
-
-            System.out.println("Mensaje del servidor: " + cadenaServer);
-             */
+            if (serverEstado == "true") {
+                byte[] b = hora.getBytes();
+                sendHour = new DatagramPacket(b, b.length, InetAddress.getByName("localhost"), 1234);
+                cl.send(sendHour);
+            }
 
             try {
                 Thread.sleep(1000);

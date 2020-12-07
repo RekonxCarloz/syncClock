@@ -2,10 +2,11 @@
 public class clientHour extends javax.swing.JFrame {
 
     public static cliente reloj;
+
     public clientHour() {
         initComponents();
         reloj = new cliente(clockScreen);
-        
+
     }
 
     /**
