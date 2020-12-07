@@ -206,6 +206,7 @@ public class serverClients extends javax.swing.JFrame {
             b = estadoF.getBytes();
             stopClock = new DatagramPacket(b, b.length, server.host1(), server.puerto1());
             s.send(stopClock);
+            System.out.println("false");
         } catch (SocketException ex) {
             System.out.println("Error en crear socket : " + ex.toString());
         } catch (IOException ex) {
@@ -223,7 +224,6 @@ public class serverClients extends javax.swing.JFrame {
             b = nuevaHora.getBytes();
             sendHour = new DatagramPacket(b,b.length, server.host1(), server.puerto1());
             s.send(sendHour);
-            System.out.println(nuevaHora);
         } catch (SocketException ex) {
             System.out.println("Error en crear socket : " + ex.toString());
         } catch (IOException ex) {
