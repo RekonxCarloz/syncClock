@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public class cliente extends Thread {
 
-    public String hora;
+    public String hora, setHora;
     public int horas, minutos, segundos, puerto;
     public DatagramSocket cl;
     public InetAddress host;
@@ -30,7 +30,7 @@ public class cliente extends Thread {
             Thread ct = Thread.currentThread();
 
             while (ct == h1) {
-                setHour(15, 9, 55, true);
+                setHour(20, 29, 55, true);
             }
 
             // ----------------------------- Recibir Paquete ----------------------------
@@ -38,12 +38,10 @@ public class cliente extends Thread {
 
             String cadenaServer = "";
             DatagramPacket mensajeServer;
-            for (int j = 0; j < numero_paquetes; j++) {
                 mensajeServer = new DatagramPacket(buff2, buff2.length);
                 cl.receive(mensajeServer);
-                msj2 = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
-                cadenaServer += msj2;
-            }
+                cadenaServer = new String(mensajeServer.getData(), 0, mensajeServer.getLength());
+            
 
             System.out.println("Mensaje del servidor: " + cadenaServer);
              */
@@ -79,12 +77,12 @@ public class cliente extends Thread {
             m = Integer.toString(minutos);
             s = Integer.toString(segundos);
             hora = "cliente 1: " + h + ":" + m + ":" + s;
-            clockScreen.setText(hora);
+            setHora = hora.substring(11,hora.length());
+            clockScreen.setText(setHora);
 
             byte[] b = hora.getBytes();
-            System.out.println(b);
             sendHour = new DatagramPacket(b, b.length, InetAddress.getByName("localhost"), 2000);
-                cl.send(sendHour);
+            cl.send(sendHour);
 
             try {
                 Thread.sleep(1000);
